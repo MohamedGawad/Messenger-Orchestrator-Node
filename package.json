@@ -1,39 +1,39 @@
 {
-  "name": "Messenger-Orchestrator-Node",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "dev": "nodemon app.js"
-  },
-  "author": "mohamed-ramdan",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/watson-developer-cloud/assistant-simple.git"
-  },
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "ibm-watson": "^5.6.2",
-    "mongoose": "^5.9.28",
-    "morgan": "^1.10.0",
-    "nodemon": "^2.0.4",
-    "request": "^2.88.2",
-    "watson-developer-cloud": "^3.18.4"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
-  "devDependencies": {
-    "babel-eslint": "^8.2.6",
-    "casperjs": "^1.1.4",
-    "codecov": "^3.0.4",
-    "eslint": "^5.1.0",
-    "jest": "^23.4.1",
-    "phantomjs-prebuilt": "^2.1.16",
-    "supertest": "^3.1.0"
-  }
+    "name": "Messenger-Orchestrator-Node",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "dev": "nodemon app.js",
+        "test": "node app.js"
+    },
+    "author": "mohamed-ramdan",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MohamedGawad/Messenger-Orchestrator-Node.git"
+    },
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "ibm-watson": "^5.6.2",
+        "mongoose": "^5.9.28",
+        "morgan": "^1.10.0",
+        "nodemon": "^2.0.4",
+        "request": "^2.88.2"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
+    "devDependencies": {
+        "babel-eslint": "^8.2.6",
+        "casperjs": "^1.1.4",
+        "codecov": "^3.0.4",
+        "eslint": "^5.1.0",
+        "jest": "^23.4.1",
+        "phantomjs-prebuilt": "^2.1.16",
+        "supertest": "^3.1.0"
+    }
 }

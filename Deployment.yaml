@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messenger-orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messenger-orchestrator
+  template:
+    metadata:
+      labels:
+        app: messenger-orchestrator
+    spec:
+      containers:
+      - name: messenger-orchestrator
+        image: de.icr.io/chatbot-bsu-dev/messengerorchestrator:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: APP_SECRET
+          value: "44e850a052732afe4eef3c3512cd55b9"
+        - name: APP_ID
+          value: "3375377735832498"
+        - name: PAGE_ACCESS_TOKEN
+          value: "EAAv9417tU7IBAIpgwzGcmiAw3LP8VLXoDB0xRHVrBeAkWwHlfr1kZCiQdUwbUZBNYUbkGnmisQcvLkku0j5NesknB6mV7HCacy5utik6TYZAM0q4MQV6vBUlZBrZBwAFNrRd6MKDeSd94GLLoxzvkpcISwtWBKXZBtXmvZBx3nZBBkxihDZAzNQsTjkMf9CgrbZAMZD"
+        - name: VALIDATION_TOKEN
+          value: "Assistant_API_V_TOKEN"
+        - name: WORKSPACE_ID_AGENT
+          value: "f8aeefb0-add7-47c9-9b49-09b24bdeaaf7"
+        - name: WORKSPACE_ID_SUAR
+          value: "eb8d74f7-21f7-4f5a-a1d9-dd068d2b9efa"
+        - name: WORKSPACE_ID_SUEN
+          value: "d4884257-d2f2-4cec-94b9-68d28d0212b6"
+        - name: WORKSPACE_ID_TELAR
+          value: "801d04c2-3c91-4550-a7d9-0adb082264f7"
+        - name: WORKSPACE_ID_ADMEN
+          value: "57d0e6a7-5cd1-4c29-b795-eb840bc101c9"
+        - name: ASSISTANT_IAM_API_KEY
+          value: "mUcnaEwzDZOc-M6eK2MmgURMhJJ1JKSqKblzt81uQb5Q"
+        - name: ASSISTANT_IAM_URL
+          value: "https://api.eu-gb.assistant.watson.cloud.ibm.com/instances/c3608af7-089c-4c2c-b9ae-05f0255b4f85"
+        - name: VERSION
+          value: "2020-04-01"
+      imagePullSecrets:
+            - name: default-de-icr-io
