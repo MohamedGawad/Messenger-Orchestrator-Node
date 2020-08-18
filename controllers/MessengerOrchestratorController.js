@@ -43,6 +43,9 @@ exports.verifyWebhook = (req, res) => {
 // Recieve Messanger Message
 exports.recieveMessage = (req, res) => {
 
+  var isGetStartedPostBack = false;
+  var isPostBack = false;
+  var isInputMessage = false;
   console.log("=============== webhhok starts ===========================");
     //================== webhhok starts ========================================================================
     let body = req.body;
@@ -65,11 +68,19 @@ exports.recieveMessage = (req, res) => {
       if (webhook_event.message) {
         //Utility.handleMessage(sender_psid, webhook_event.message);
         msngrInput = webhook_event.message;
+        isInputMessage = true;
+        console.log("********************webhook_event.message", webhook_event.message);
              
       }
       else if (webhook_event.postback) {
         //Utility.handlePostback(sender_psid, webhook_event.postback);
         msngrInput = webhook_event.postback;
+        console.log("********************webhook_event.message", webhook_event.postback);
+        isPostBack = true;
+
+        if (webhook_event.postback.payload == 'GET_STARTED_PAYLOAD'){
+          isGetStartedPostBack = true;
+        }
       }  
     });
   
@@ -82,8 +93,8 @@ exports.recieveMessage = (req, res) => {
   }
 
     //=========================== webhook end =================================================================
-
-    console.log("let msngrInput ==> ", msngrInput);
+    if (isInputMessage || (isPostBack && !isGetStartedPostBack)){
+      console.log("let msngrInput ==> ", msngrInput);
     var workspace = Utility.getDestinationBot(req.body.context) || '<workspace-id>';
     console.log("workspace = " + workspace);
     if (!workspace || workspace === '<workspace-id>') {
@@ -122,14 +133,22 @@ exports.recieveMessage = (req, res) => {
           if (err) {
             return res.status(err.code || 500).json(err);
           }
-          Utility.updateMessage(payload, data);
+          //Utility.updateMessage(payload, data);
+          console.log("handleMessage normal call");
+          Utility.handleMessage(senderIdNum, String(data.output.text));
         });
       } 
       else { // There is no redirect. So send back the response to user for further action
-        Utility.updateMessage(payload, data);
+        //Utility.updateMessage(payload, data);
+        console.log("handleMessage else call");
+        Utility.handleMessage(senderIdNum, String(data.output.text));
       }
   
     });
+    }
+    else{
+      console.log("Get Started post back <<<<<<");
+    }
     
 }
 
