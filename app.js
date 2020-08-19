@@ -4,6 +4,7 @@ const msgnrOrcRouter = require('./routes/MessengerOrchestratorRouter');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const bodyParser = require("body-parser");
+const Utility = require("./utilities/Utility");
 
 // init
 const app = express()
@@ -19,3 +20,7 @@ app.use('/', msgnrOrcRouter);
 // server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {console.log(`Server is listening on port: ${port}`)});
+
+// Get Started
+Utility.sendGetStarted();
+Utility.getPersistentMenu();

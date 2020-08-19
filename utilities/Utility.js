@@ -1,5 +1,17 @@
 // imports
 const request = require('request');
+const dotenv = require('dotenv');
+
+
+
+// env var consts
+dotenv.config();
+const BACKEND_URL = process.env.BACKEND_URL;
+const MESSENGER_URL = process.env.MESSANGER_URL;
+const MESSENGER_PROFILE_URL = process.env.MESSANGER_PROFILE_URL;
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
+
 
 function callSendAPI(sender_psid, response) {
     // Construct the message body
@@ -92,40 +104,77 @@ exports.getDestinationBot = (context) => {
 };
 
 
-/**
- * Updates the response text using the intent confidence
- * @param  {Object} input The request to the Assistant service
- * @param  {Object} response The response from the Assistant service
- * @return {Object}          The response with the updated message
- */
-exports.updateMessage = (input, response) => {
-  var responseText = null;
-  if (!response.output) {
-    response.output = {};
-  } else {
-    console.log("==>Response message: " + JSON.stringify(response.output.text));
-    console.log("==>responseText: ", String(response.output.text));
-    console.log("==> JSON.stringify(response.output.text): ",JSON.stringify(response.output.text));
-    exports.handleMessage(senderIdNum, String(response.output.text));
-    
-    //return response;
-  }
-  if (response.intents && response.intents[0]) {
-    var intent = response.intents[0];
-    // Depending on the confidence of the response the app can return different messages.
-    // The confidence will vary depending on how well the system is trained. The service will always try to assign
-    // a class/intent to the input. If the confidence is low, then it suggests the service is unsure of the
-    // user's intent . In these cases it is usually best to return a disambiguation message
-    // ('I did not understand your intent, please rephrase your question', etc..)
-    if (intent.confidence >= 0.75) {
-      responseText = 'I understood your intent was ' + intent.intent;
-    } else if (intent.confidence >= 0.5) {
-      responseText = 'I think your intent was ' + intent.intent;
-    } else {
-      responseText = 'I did not understand your intent';
-    }
-  }
-  response.output.text = responseText;
+// Get Started Handling 
+exports.sendGetStarted=()=> {
+	// var messageData = {
+	// 	setting_type: 'call_to_actions',
+	// 	thread_state: 'new_thread',
+	// 	call_to_actions: [{
+	// 		payload: 'GET_STARTED_PAYLOAD'
+	// 	}]
+	// };
+
+  var get_started_payload = require("../payloads/get_started_payload.json");
+  getMessengerProfile(BACKEND_URL + '/GetStarted', 'GET', callFBSendAPI, 'addGetStarted', get_started_payload);
+		
+	
+}
+
+
+function getMessengerProfile(url, method, callback, methodName, messangerProfilepayload) {
   
-  //return response;
-};
+  callback(messangerProfilepayload, MESSENGER_PROFILE_URL + PAGE_ACCESS_TOKEN, 'POST', methodName);
+	// var req = request({
+	// 	uri: url,
+	// 	method: method,
+	// 	json: true,
+	// 	headers: {
+	// 		"content-type": "application/json; charset=utf-8",
+	// 	}
+	// }, function (error, response, body) {
+	// 	if (!error) {
+	// 		if (body.entity) {
+  //       callback(body.entity, MESSENGER_PROFILE_URL + pagesMap[pageID], 'POST', methodName);
+	// 		}
+	// 	} else {
+	// 		console.error("Unable to sendPostRequest");
+	// 		console.error(error);
+	// 	}
+	// });
+}
+
+function callFBSendAPI(messageData, url, method, methodName) {
+	request({
+		uri: url,
+		method: method,
+		json: messageData
+	}, function (error, response, body) {
+		if (!error) {
+			console.log('Sucess Response', response.body);
+		} else {
+			console.error("Unable to " + methodName);
+			console.error(error);
+		}
+	});
+}
+
+
+
+
+// Handle Presistant Menu 
+function addPersistentMenu() {
+	var deleted = {
+		"fields": [
+			"persistent_menu"
+		]
+	};
+	
+			// console.log(pageID + " -> " + pagesMap[pageID]);
+			callFBSendAPIWithCallback(deleted, MESSENGER_PROFILE_URL + PAGE_ACCESS_TOKEN, 'DELETE', 'DeletePersistentMenu', getPersistentMenu);
+	
+}
+
+exports.getPersistentMenu=()=> {
+  var presistant_menu_payload = require("../payloads/presistant_menu_payload.json");
+	getMessengerProfile(BACKEND_URL + '/Menu', 'GET', callFBSendAPI, 'addMenu', presistant_menu_payload);
+}

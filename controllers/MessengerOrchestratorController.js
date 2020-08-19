@@ -13,6 +13,7 @@ console.log("AsistantAPI_KEY => ", assistantAPIKey);
 var assistantURL = process.env.ASSISTANT_IAM_URL;
 var assistantVersion = process.env.VERSION;
 
+
 console.log("assistantVersion = " + assistantVersion);
 // Create the service wrapper
 const assistant = new AssistantV1({
@@ -151,4 +152,5 @@ exports.recieveMessage = (req, res) => {
     }
     
 }
+
 
