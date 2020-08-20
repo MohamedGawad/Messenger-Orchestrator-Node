@@ -10,6 +10,8 @@ const BACKEND_URL = process.env.BACKEND_URL;
 const MESSENGER_URL = process.env.MESSANGER_URL;
 const MESSENGER_PROFILE_URL = process.env.MESSANGER_PROFILE_URL;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const USER_MNGMT_URL = process.env.USER_MNGMT_URL;
+const APP_ID = process.env.APP_ID;
 
 
 
@@ -177,4 +179,127 @@ function addPersistentMenu() {
 exports.getPersistentMenu=()=> {
   var presistant_menu_payload = require("../payloads/presistant_menu_payload.json");
 	getMessengerProfile(BACKEND_URL + '/Menu', 'GET', callFBSendAPI, 'addMenu', presistant_menu_payload);
+}
+
+
+
+exports.getUserProfile=(event)=> {
+	sendTypingOn(event.sender.id);
+	var userID = event.sender.id;
+	console.log("senderId = " + userID);
+	var http = require('https');
+	var path = '/v2.6/' + userID + '?access_token=' + PAGE_ACCESS_TOKEN;
+	var options = {
+		host: 'graph.facebook.com',
+		path: path
+	};
+
+	
+	var req = http.get(options, function (res) {
+		// console.log('STATUS: ' + res.statusCode);
+		//	console.log('HEADERS: ' + JSON.stringify(res.headers));
+		// Buffer the body entirely for processing as a whole.
+		var bodyChunks = [];
+		res.on('data', function (chunk) {
+			// You can process streamed parts here...
+			bodyChunks.push(chunk);
+		}).on('end', function () {
+			var body = Buffer.concat(bodyChunks);
+			var bodyObject = JSON.parse(body);
+			console.log("*****bodyObject " + JSON.stringify(bodyObject));
+			firstName = bodyObject.first_name;
+			lastName = bodyObject.last_name;
+			profilepic = bodyObject.profile_pic;
+			locale = bodyObject.locale;
+			timezone = bodyObject.timezone;
+			gender = bodyObject.gender;
+			if (!firstName)
+				firstName = "undefined";
+			if (!lastName)
+				lastName = "undefined";
+			saveUserReq = {};
+			saveUserReq.id = userID;
+			saveUserReq.firstName = firstName;
+			saveUserReq.lastName = lastName;
+			saveUserReq.profilePic = profilepic;
+			saveUserReq.locale = locale;
+			saveUserReq.timezone = timezone;
+			saveUserReq.gender = gender;
+      saveUserReq.appId = APP_ID;
+      saveUserReq.userUniqueId = userID;
+      saveUserReq.channelId = "MSGR";
+      console.log("*********saveUserReq " + JSON.stringify(saveUserReq));
+      //saveUser();
+      saveUser(saveUserReq);
+		})
+	});
+	req.on('error', function (e) {
+		console.log('ERROR: ' + e.message);
+	});
+}
+
+
+
+function saveUser(userData) {
+	console.error("userData to " + JSON.stringify(userData));
+	var req = request({
+		uri: USER_MNGMT_URL+"/addUserProfile",
+		method: "POST",
+		json: true,
+		body: userData
+	}, function (error, response, body) {
+		console.error("response to " + JSON.stringify(response));
+		if (!error) {
+			if (body && body.entity && body.entity.length > 0) {
+        console.log(">>>>>>>>>>Body.entity");
+        // should call watson to return the get started reply
+				//sendArrayOfMessage(body.entity, FB_SEND_API_URL + PAGE_ACCESS_TOKEN, 'POST', '', 0);
+			}
+			else if (body && body.length > 0) {
+        console.log(">>>>>>>>>>Body");
+        // should call watson to return the get started reply
+				//sendArrayOfMessage(body, FB_SEND_API_URL + PAGE_ACCESS_TOKEN, 'POST', '', 0);
+			}
+		} else {
+			console.error("Unable to sendPostRequest");
+			console.error(error);
+		}
+	});
+}
+
+
+function sendArrayOfMessage(messageData, url, method, methodName, i) {
+	console.error('messageData>>>>>', JSON.stringify(messageData));
+	request({
+		uri: url,
+		method: method,
+		json: messageData[i]
+	}, function (error, response, body) {
+		if (!error) {
+			// console.log('!error' + JSON.stringify(messageData[i + 1]));
+			if (messageData[i + 1]) {
+				console.log('!error');
+				sendArrayOfMessage(messageData, FB_SEND_API_URL + PAGE_ACCESS_TOKEN, 'POST', '', (i + 1));
+			}
+			else
+				return;
+			console.log('Sucess Response', response.body);
+		} else {
+			console.error("Unable to " + methodName);
+			console.error(error);
+		}
+	});
+}
+
+function sendTypingOn(recipientId) {
+	console.log("Turning typing indicator on");
+
+	var messageData = {
+		recipient: {
+			id: recipientId
+		},
+		sender_action: "typing_on"
+	};
+
+	callSendAPI(messageData);
 }

@@ -81,6 +81,8 @@ exports.recieveMessage = (req, res) => {
 
         if (webhook_event.postback.payload == 'GET_STARTED_PAYLOAD'){
           isGetStartedPostBack = true;
+          //Utility.handleUserProfile(); => getUserProfile() => saveUserInfo()
+          Utility.getUserProfile(webhook_event);
         }
       }  
     });
