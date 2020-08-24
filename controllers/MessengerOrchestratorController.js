@@ -107,6 +107,19 @@ exports.recieveMessage = (req, res) => {
         }
       });
     }
+
+
+    // to be agreed with wael upon
+    /**
+     msngrInput = {
+       "userUniqueId": valueForRegisteredUser,
+       "channelUserId" : valueForChannelUser,
+       "channel" : value,
+       "InputMessage" : value
+     } 
+     
+     */
+
     var payload = {
       workspaceId: workspace,
       context: req.body.context || msngrInput,

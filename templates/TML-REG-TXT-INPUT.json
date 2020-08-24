@@ -1,0 +1,12 @@
+{
+    "common": {
+        "template_code": "TML-REG-TXT-INPUT",
+        "userUniqueId": "auth_user or anony_channel_id"
+    },
+
+    "template_data": {
+        "message":{
+            "text":"hello, world!"
+        }
+    }
+}

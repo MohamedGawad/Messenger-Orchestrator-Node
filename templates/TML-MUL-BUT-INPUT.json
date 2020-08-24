@@ -1,0 +1,18 @@
+{
+    "common": {
+        "template_code": "TML-MUL-BUT-INPUT",
+        "userUniqueId": "auth_user or anony_channel_id"
+    },
+
+    "template_data": {
+        "text":"What do you want to do next?",
+        "buttons":[
+            {
+              "type":"web_url",
+              "url":"https://www.messenger.com",
+              "title":"Visit Messenger"
+            }
+            
+          ]
+    }
+}
